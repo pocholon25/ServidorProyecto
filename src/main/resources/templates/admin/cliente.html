@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid p-4 mt-3">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card card-sh">
+						<div class="card-header text-center fs-3 card-header-custom"><!-- cabecera -->
+							<p>Clientes</p>
+							<!-- bloque de mensajes de error -->
+							<th:block th:if="${session.successMsg}">
+						        <p class="text-success fs-6 fw-bold" th:text="${session.successMsg}"></p>
+						        <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+						    </th:block>
+						    <th:block th:if="${session.errorMsg}">
+						        <p class="text-danger fs-6 fw-bold" th:text="${session.errorMsg}"></p>
+						        <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>					        
+						    </th:block>    
+							<!-- fin del bloque de mensajes --> 
+						</div>
+						<div class="card-body table-container">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th scope="col">Nro.C.</th>
+										<th scope="col">Nombres</th>										
+										<th scope="col">Celular</th>
+										<th scope="col">Email</th>
+										<th scope="col">Acción</th>
+
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="cli,c:${cliente}">
+										<th scope="row">[[${c.count}]]</th>
+										<td>[[${cli.nombre}]]</td>
+										<td>[[${cli.celular}]]</td>
+										<td>[[${cli.email}]]</td>
+										<td>
+											<a th:href="@{'/admin/deleteCliente/'+${cli.idcliente}}"><i class="fa-solid fa-trash text-danger fa-2x"></i></a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

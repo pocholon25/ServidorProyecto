@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+<body>
+
+	<section>
+		<!-- inicio de slider -->
+		<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+			<div class="carousel-indicators">
+				<button type="button" data-bs-target="#carouselExampleIndicators"data-bs-slide-to="0" class="active" aria-current="true"aria-label="Slide 1"></button>
+				<button type="button" data-bs-target="#carouselExampleIndicators"data-bs-slide-to="1" aria-label="Slide 2"></button>
+				<button type="button" data-bs-target="#carouselExampleIndicators"data-bs-slide-to="2" aria-label="Slide 3"></button>
+			</div>
+			<div class="carousel-inner">
+				<div class="carousel-item active" style=" height:500px">
+					<img src="https://t3.ftcdn.net/jpg/03/97/84/64/360_F_397846477_sKYl0TMRf0NHKnj6m9qeZRuRrREc7i5p.jpg" 
+					class="d-block w-100" style="opacity: 0.8;">
+					<div class="carousel-caption d-none d-md-block fw-bold">
+				        <h2>Tu Supermercado de Confianza</h2>
+				        <h4>Encuentra todo lo que necesitas bajo un mismo techo.</h4>
+				    </div>
+				</div>
+				<div class="carousel-item" style=" height:500px">
+					<img src="https://t3.ftcdn.net/jpg/03/97/84/64/360_F_397846477_sKYl0TMRf0NHKnj6m9qeZRuRrREc7i5p.jpg" 
+					class="d-block w-100" style="opacity: 0.8;">
+					<div class="carousel-caption d-none d-md-block fw-bold">
+		                <h2>Calidad y Frescura en Cada Compra</h2>
+		                <h4>Calidad y frescura garantizadas en cada pasillo.</h4>
+		            </div>
+				</div>
+				<div class="carousel-item" style=" height:500px">
+					<img src="https://t3.ftcdn.net/jpg/03/97/84/64/360_F_397846477_sKYl0TMRf0NHKnj6m9qeZRuRrREc7i5p.jpg" 
+					class="d-block w-100" style="opacity: 0.8;">
+					<div class="carousel-caption d-none d-md-block fw-bold">
+		                <h2>Ofertas que No Puedes Ignorar</h2>
+		                <h4>Ahorra más con nuestras ofertas y promociones diarias.</h4>
+		            </div>
+				</div>
+			</div>
+			<button class="carousel-control-prev" type="button"data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Previous</span>
+			</button>
+			<button class="carousel-control-next" type="button"data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Next</span>
+			</button>
+		</div>
+		<!-- fin del slider -->
+
+		<!-- inicio del modulo  categoria -->
+		<div class="container mb-4">
+			<div class="row">
+				<p class="text-center fs-3 fw-bold my-4">Categorias</p>
+				<div class="col-md-3 mb-3">
+					<div
+						class="card rounded-circle shadow-sm p-3  bg-body-tertiary rounded" style="width: 70%;">
+						<!-- un reflejo de sombra sacado de bootstrap shadow -->
+						<div class="card-body text-center mt-2">
+							<i class="fas fa-apple-alt fa-3x"></i>
+							<p>Vegetales</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div
+						class="card rounded-circle shadow-sm p-3 bg-body-tertiary rounded" style="width: 70%;">
+						<!-- un reflejo de sombra sacado de bootstrap shadow -->
+						<div class="card-body text-center mt-2">
+							<i class="fas fa-hotdog fa-3x"></i>
+							<p>Embutidos</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div
+						class="card rounded-circle shadow-sm p-3 bg-body-tertiary rounded" style="width: 70%;">
+						<!-- un reflejo de sombra sacado de bootstrap shadow -->
+						<div class="card-body text-center mt-2">
+							<i class="fas fa-beer fa-3x"></i>
+							<p>Bebidas</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div
+						class="card rounded-circle shadow-sm p-3 bg-body-tertiary rounded" style="width: 70%;">
+						<!-- un reflejo de sombra sacado de bootstrap shadow -->
+						<div class="card-body text-center mt-2">
+							<i class="fas fa-cheese fa-3x"></i>
+							<p>Lacteos</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div
+						class="card rounded-circle shadow-sm p-3 bg-body-tertiary rounded" style="width: 70%;">
+						<!-- un reflejo de sombra sacado de bootstrap shadow -->
+						<div class="card-body text-center mt-2">
+							<i class="fas fa-broom fa-3x"></i>
+							<p>Limpieza</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div
+						class="card rounded-circle shadow-sm p-3 bg-body-tertiary rounded" style="width: 70%;">
+						<!-- un reflejo de sombra sacado de bootstrap shadow -->
+						<div class="card-body text-center mt-2">
+							<i class="fas fa-wine-bottle fa-3x"></i>
+							<p>Licores</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div
+						class="card rounded-circle shadow-sm p-3 bg-body-tertiary rounded" style="width: 70%;">
+						<!-- un reflejo de sombra sacado de bootstrap shadow -->
+						<div class="card-body text-center mt-2">
+							<i class="fas fa-shopping-basket fa-3x"></i>
+							<p>Abarrotes</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div
+						class="card rounded-circle shadow-sm p-3 bg-body-tertiary rounded" style="width: 70%;">
+						<!-- un reflejo de sombra sacado de bootstrap shadow -->
+						<div class="card-body text-center mt-2">
+							<i class="fas fa-ellipsis-h fa-3x"></i>
+							<p>Ver Más</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- fin del modulo  categoria -->
+
+		<!--iniciar el modulo del ultimo producto
+
+		<div class="container-fluid bg-light p-3">
+			<div class="row">
+				<p class="text-center fs-3 fw-bold">Ultimos Productos</p>
+				<div class="col-md-3">
+					<div class="card shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+						<div class="card-body text-center">
+							<img src="img/producto1.png" alt="" class="" width="65%" height="140px">
+							<p class="text-center">Bomba de agua para sistemas de enfriamiento</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="card shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+						<div class="card-body text-center">
+							<img src="img/producto2.png" alt="" class="" width="65%" height="140px">
+							<p class="text-center">Pastillas de freno y discos de freno</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="card shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+						<div class="card-body text-center">
+							<img src="img/producto3.png" alt="" class="" width="65%" height="140px">
+							<p class="text-center">Kits de amortiguadores para la suspensión</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="card shadow-sm p-3 mb-5 bg-body-tertiary rounded">
+						<div class="card-body text-center">
+							<img src="img/producto4.png" alt="" class="" width="65%" height="140px">
+							<p class="text-center">Correas de distribución para motores</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>fini del modulo del ultimo producto-->
+		
+				
+
+	</section>
+</body>
+</html>

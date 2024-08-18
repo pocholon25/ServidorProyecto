@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+.card-sh{
+	box-shadow: 0 0 8px 0 rgba(0,0,0,0.3);
+}
+
+.cat-div{
+	box-shadow:  0 0 10px rgba(0,0,0, .1);
+	}
+	
+.card-header-custom {
+    background-color: #ffe3c8;
+}
+
+.table-container {
+    max-height: 556px !important; /* Ajusta la altura según tus necesidades */
+    overflow-y: auto !important; /* Agrega una barra de desplazamiento vertical si es necesario */
+}
