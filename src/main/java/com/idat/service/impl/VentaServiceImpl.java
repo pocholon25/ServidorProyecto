@@ -2,20 +2,18 @@ package com.idat.service.impl;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import com.idat.model.DetalleVenta;
+import com.idat.model.Pedido;
 import com.idat.model.Venta;
+import com.idat.model.VentaPedidoDTO;
 import com.idat.repository.ProductRepository;
 import com.idat.repository.VentaDao;
-import com.idat.repository.VentaRepository;
 import com.idat.service.VentaService;
 
-import jakarta.persistence.EntityManager;
 
 @Service
 public class VentaServiceImpl implements VentaService{
@@ -24,15 +22,12 @@ public class VentaServiceImpl implements VentaService{
 	private VentaDao dao;
 	@Autowired
 	private ProductRepository daoProducto;
-	@Autowired
-	private VentaRepository ventaRepository;
-	
+
     @Autowired
-    private EntityManager entityManager;
+	private PedidoService pedidoService;
 
-
-	@Override
-	public Venta registrar(Venta t) {
+    @Override
+	public VentaPedidoDTO registrar(Venta t) {
 		t.setIdVenta(0L);
 		double importe =0;
 		for(DetalleVenta d: t.getDetalleVenta()) {
@@ -43,14 +38,18 @@ public class VentaServiceImpl implements VentaService{
 		}
 		t.setImporte(importe);
 		t=dao.save(t);
-		return t;	
+		Pedido nuevoPedido = pedidoService.crearPedido(t.getIdVenta());
+		////desde aca
+		String estadoPedido = nuevoPedido.getEstadoPedido();		
+		VentaPedidoDTO dto = new VentaPedidoDTO();
+		dto.setIdVenta(t.getIdVenta());
+		dto.setCliente(t.getCliente());
+		dto.setFecha(t.getFecha());
+		dto.setImporte(t.getImporte());
+		dto.setDetalleVenta(t.getDetalleVenta());
+		dto.setEstadoPedido(estadoPedido);
+		return dto;	
 	}
-
-	@Override
-	public Venta modificar(Venta t) {
-		return dao.save(t);
-	}
-
 	@Override
 	public boolean eliminar(Long id) {
 		Optional<Venta>opt = dao.findById(id);
@@ -58,6 +57,11 @@ public class VentaServiceImpl implements VentaService{
 			dao.delete(opt.get());
 			return true;
 		}return false;
+	}
+
+	@Override
+	public Venta modificar(Venta t) {
+		return dao.save(t);
 	}
 
 	@Override
@@ -75,9 +79,5 @@ public class VentaServiceImpl implements VentaService{
 		return dao.findAll(pagina);
 	}
 
-	@Override
-	public List<Venta> listarVentas() {
-		return dao.findAll();
-	}
-
+	
 }

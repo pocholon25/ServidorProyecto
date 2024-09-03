@@ -27,7 +27,7 @@
 						</div>
                         
                         <div class="card-body">
-                            <form th:action="@{/admin/saveProduct}" th:object="${producto}" method="post" enctype="multipart/form-data">
+                            <form th:action="@{/admin/updateProduct/{id}(id=${producto.id})}" th:object="${producto}" method="post" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <label>Digite el Titulo</label>
                                     <input type="text" th:field="*{nombre}" class="form-control" required>
@@ -58,6 +58,7 @@
                                         <input type="file" name="file" class="form-control">
                                     </div>
                                 </div>
+								<img th:src="@{'/img/product_img/'+${producto.image}}" width="100px" height="100px" >
                                 <button type="submit" class="btn btn-warning col-md-6 offset-md-3">Actualizar</button>
                             </form>
                         </div>

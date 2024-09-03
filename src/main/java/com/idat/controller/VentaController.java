@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.idat.model.Venta;
+import com.idat.model.VentaPedidoDTO;
 import com.idat.service.VentaService;
 
 @RestController
@@ -36,10 +37,10 @@ public class VentaController {
 		return service.buscar(id);
 	}
 	
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Venta> registrar(@RequestBody Venta vN){
-		Venta _V = service.registrar(vN);
-		return ResponseEntity.ok(_V);
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<VentaPedidoDTO> registrar(@RequestBody Venta vN) {
+	    VentaPedidoDTO ventaPedidoDTO = service.registrar(vN);
+	    return ResponseEntity.ok(ventaPedidoDTO);
 	}
 	
 	@PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)

@@ -2,18 +2,18 @@ package com.idat.service.impl;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-
-import com.idat.model.Categoria;
 import com.idat.model.Cliente;
 import com.idat.model.ClienteUpdate;
 import com.idat.model.LoginMessage;
 import com.idat.model.LoginRequest;
+import com.idat.model.LoginRequestDto;
+import com.idat.model.Usuario;
+import com.idat.model.UsuarioUpdate;
 import com.idat.repository.IClienteRepository;
 import com.idat.service.ClienteService;
 
@@ -65,8 +65,8 @@ public class ClienteServiceImpl implements ClienteService {
 	}
 
 	@Override
-	public LoginMessage loginUsuario(LoginRequest loginRequest) {
-		 Optional<Cliente> clienteOpt = dao.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
+	public LoginMessage loginUsuario(LoginRequestDto loginRequestDto) {
+		 Optional<Cliente> clienteOpt = dao.findByEmailAndPassword(loginRequestDto.getEmail(), loginRequestDto.getPassword());
 	        if (clienteOpt.isPresent()) {
 	            Cliente cliente = clienteOpt.get();
 	            return new LoginMessage(
@@ -79,7 +79,7 @@ public class ClienteServiceImpl implements ClienteService {
 	                cliente.getIdcliente().intValue()
 	            );
 	        } else {
-	            return new LoginMessage("Invalid credentials", false, null, null,null, null, 0);
+	            return new LoginMessage("Credenciales Incorrectas !!!", false);
 	        }
 	}
 
@@ -96,7 +96,7 @@ public class ClienteServiceImpl implements ClienteService {
             cliente.setNombre(clienteUpdate.getNombre());
             cliente.setEmail(clienteUpdate.getEmail());
             cliente.setCelular(clienteUpdate.getCelular());
-            cliente.setPassword(clienteUpdate.getPassword()); // Asegúrate de cifrar la contraseña antes de guardar
+            cliente.setPassword(clienteUpdate.getPassword());
             return dao.save(cliente);
         }
         return null;
@@ -116,6 +116,17 @@ public class ClienteServiceImpl implements ClienteService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public Usuario actualizarUsuario(Long id, UsuarioUpdate usuarioUpdate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Cliente saveCliente(Cliente cliente) {
+		return dao.save(cliente);
 	}
 	}
 

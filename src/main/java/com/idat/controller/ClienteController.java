@@ -1,8 +1,6 @@
 package com.idat.controller;
-import java.net.URI;
-import java.util.List;
 
-import org.apache.juli.logging.Log;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,14 +15,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.idat.model.Cliente;
 import com.idat.model.ClienteUpdate;
 import com.idat.model.LoginMessage;
 import com.idat.model.LoginRequest;
+import com.idat.model.LoginRequestDto;
 import com.idat.model.ResponseMessage;
 import com.idat.service.ClienteService;
-
 
 
 @RestController
@@ -68,13 +65,13 @@ public class ClienteController {
 	}
 	
 	 @PostMapping("/login")
-	    public ResponseEntity<LoginMessage> login(@RequestBody LoginRequest loginRequest) {
-		 System.out.println("Received login request: " + loginRequest);
-	        LoginMessage response = service.loginUsuario(loginRequest);
+	    public ResponseEntity<LoginMessage> login(@RequestBody LoginRequestDto loginRequestDto) {
+	        LoginMessage response = service.loginUsuario(loginRequestDto);
 	        if (response.isSuccess()) {
 	            return ResponseEntity.ok(response);
 	        } else {
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	        	LoginMessage fallido = new LoginMessage(response.getMessage(), response.isSuccess());
+	            return ResponseEntity.status(HttpStatus.OK).body(fallido);
 	        }
 	    }
 

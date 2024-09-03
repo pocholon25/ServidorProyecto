@@ -16,3 +16,33 @@
     max-height: 556px !important; /* Ajusta la altura según tus necesidades */
     overflow-y: auto !important; /* Agrega una barra de desplazamiento vertical si es necesario */
 }
+
+.pagination {
+    display: flex;
+    gap: 10px; /* Ajusta el espacio entre los números */
+    list-style: none;
+    padding: 0;
+}
+
+.pagination li {
+    display: inline;
+}
+
+.pagination a {
+    text-decoration: none;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    color: #007bff; /* Color del enlace */
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.pagination a:hover {
+    background-color: #f0f0f0; /* Color al pasar el ratón */
+}
+
+.pagination .active a {
+    background-color: #007bff; /* Color de la página activa */
+    color: white; /* Color del texto de la página activa */
+    border-color: #007bff; 
+}

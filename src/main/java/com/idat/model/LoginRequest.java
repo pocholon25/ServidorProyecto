@@ -6,18 +6,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table(name = "cliente")
+@Table(name = "usuario")
 public class LoginRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idcliente;
+    private Long idusuario;
 
     @Column(name = "email")
     private String email;
@@ -25,14 +21,12 @@ public class LoginRequest {
     @Column(name = "password")
     private String password;
 
-    // Getters y Setters
-
     public Long getId() {
-        return idcliente;
+        return idusuario;
     }
 
     public void setId(Long id) {
-        this.idcliente = id;
+        this.idusuario = id;
     }
 
     public String getEmail() {

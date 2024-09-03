@@ -1,17 +1,12 @@
 package com.idat.service.impl;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import com.idat.model.Categoria;
 import com.idat.repository.CategoriaRepositorio;
 import com.idat.service.CategoriaServicio;
-
-import jakarta.servlet.http.HttpSession;
 
 @Service
 public class CategoriaServicioImpl implements CategoriaServicio{

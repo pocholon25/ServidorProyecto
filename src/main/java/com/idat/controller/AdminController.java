@@ -8,10 +8,15 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -19,25 +24,40 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import com.idat.model.Categoria;
 import com.idat.model.Producto;
 import com.idat.model.Proveedor;
+import com.idat.model.ResponseMessage;
 import com.idat.model.Cliente;
+import com.idat.model.ClienteUpdate;
+import com.idat.model.Usuario;
+import com.idat.model.UsuarioUpdate;
+import com.idat.model.Venta;
+import com.idat.model.Pedido;
+import com.idat.model.ProductUpdate;
 import com.idat.service.CategoriaServicio;
 import com.idat.service.ClienteService;
 import com.idat.service.DetalleVentaService;
 import com.idat.service.ProductService;
 import com.idat.service.ProveedorService;
+import com.idat.service.UsuarioService;
 import com.idat.service.VentaService;
+import com.idat.service.impl.PedidoService;
+import com.idat.service.impl.ProductServiceImpl;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
+
 
 	@Autowired
 	private CategoriaServicio categoriaServicio;
@@ -50,12 +70,18 @@ public class AdminController {
 	
 	@Autowired
     private ClienteService clienteService;
+	
+	@Autowired
+    private UsuarioService usuarioService;
 
     @Autowired
     private VentaService ventaService;
 
     @Autowired
     private DetalleVentaService detalleService;
+    
+    @Autowired
+    private PedidoService pedidoService;
 
 
 	@GetMapping("/")
@@ -71,34 +97,6 @@ public class AdminController {
 		return "admin/categoria";
 	}
 
-	/*
-	 * @PostMapping("/savecategoria") 
-	 * public String saveCategoria(@ModelAttribute
-	 * Categoria categoria, @RequestParam("file") MultipartFile file, HttpSession
-	 * session) { try { if (categoria.getNombre() == null ||
-	 * categoria.getNombre().isEmpty()) { session.setAttribute("errorMsg",
-	 * "El nombre de la Categoría no puede estar vacío"); } else { String imageName
-	 * = file != null ? file.getOriginalFilename() : "default.jpg";
-	 * categoria.setImageName(imageName);
-	 * 
-	 * Boolean existCategoria =
-	 * categoriaServicio.existsByNombre(categoria.getNombre());
-	 
-	 * if (existCategoria) { session.setAttribute("errorMsg",
-	 * "El nombre de la Categoría ya existe");
-	 * session.removeAttribute("successMsg"); // Eliminar mensaje de éxito si existe
-	 * } else { Categoria saveCategoria =
-	 * categoriaServicio.saveCategoria(categoria);
-	 * 
-	 * if (saveCategoria != null) { session.setAttribute("successMsg",
-	 * "Registro Satisfactorio"); session.removeAttribute("errorMsg"); // Eliminar
-	 * mensaje de error si existe } else { session.setAttribute("errorMsg",
-	 * "No se pudo guardar. Error interno del servidor"); } } } } catch (Exception
-	 * e) { session.setAttribute("errorMsg",
-	 * "No se pudo guardar. Error interno del servidor"); }
-	 * 
-	 * return "redirect:/admin/categoria"; }
-	 */
 	@PostMapping("/savecategoria")
 	public String saveCategoria(@ModelAttribute Categoria categoria, @RequestParam("file") MultipartFile file,HttpSession session) throws IOException {
 		String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
@@ -149,13 +147,22 @@ public class AdminController {
 		return "admin/edit_categoria";
 	}
 	
-	// PRODUCTOS SERVICES
-
+	
 	@GetMapping("/addproducto")
-	public String addProducto(Model model) {
-	    model.addAttribute("producto", new Producto()); // Agregar un objeto Producto vacío al modelo
-	    model.addAttribute("categorias", categoriaServicio.getAllCategoria()); // Cargar todas las categorías
-		model.addAttribute("productos",productService.getAllProductos()); // Listar Productos
+	public String addProducto(@RequestParam(defaultValue = "0") int page, 
+	                          @RequestParam(defaultValue = "15") int size, 
+	                          Model model) {
+	    Pageable pageable = PageRequest.of(page, size);
+	    Page<Producto> paginaProductos = productService.getProductoPaginados(pageable);
+	    model.addAttribute("producto", new Producto());
+	    model.addAttribute("categorias", categoriaServicio.getAllCategoria());
+	    model.addAttribute("paginaProductos", paginaProductos);
+	    model.addAttribute("productos", paginaProductos.getContent());
+	    logger.info("Página actual: " + paginaProductos.getNumber());
+	    logger.info("Total de productos retornados: " + paginaProductos.getContent().size());
+	    logger.info("Total de productos: " + paginaProductos.getTotalElements());
+	    logger.info("Total de páginas: " + paginaProductos.getTotalPages());
+
 	    return "admin/addproducto";
 	}
 	
@@ -163,7 +170,6 @@ public class AdminController {
 	public String saveProduct(@ModelAttribute Producto product, @RequestParam("file") MultipartFile file,
 			HttpSession session) throws IOException {
 		
-		//String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();		
 		String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
 
 		product.setImage(imageName);
@@ -224,38 +230,30 @@ public class AdminController {
         return "admin/edit_product";
     }
 
-    @PostMapping("/update")
-    public String updateProduct(@ModelAttribute Producto product, 
+    @PostMapping("/updateProduct/{id}")
+    public String updateProduct(@PathVariable("id") Integer id,@ModelAttribute ProductUpdate productUpdate, 
                                 @RequestParam("file") MultipartFile image,
                                 HttpSession session) throws IOException {
         // Obtener el nombre del archivo o usar un nombre predeterminado
         String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();
 
         // Actualizar el nombre del archivo en el objeto Producto
-        product.setImage(imageName);
+        productUpdate.setImage(imageName);
 
-        // Llamar al método updateProducto del servicio para actualizar el producto
-        Producto updatedProduct = productService.updateProducto(product, image);
-
-        // Verificar si el producto se actualizó correctamente
-        if (updatedProduct != null) {
-            // Establecer un mensaje de éxito en la sesión
-            session.setAttribute("succMsg", "Producto actualizado exitosamente");
-        } else {
-            // Establecer un mensaje de error en la sesión
-            session.setAttribute("errorMsg", "Algo salió mal en el servidor");
-        }
-
-        // Redirigir a la página de edición del producto actualizado
-        return "redirect:/admin/edit/" + product.getId();
+        Producto updatedProduct = productService.actualizarProducto(id, productUpdate, image);
+	    if (updatedProduct != null) {
+	        return "redirect:/admin/addproducto";
+	    } else {
+	        return "redirect:/admin/addproducto";
+	    }
     }
 
     // PROVEEDORES SERVICES
 
 	@GetMapping("/proveedor")	
 	public String proveedor(Model model) {
-	    model.addAttribute("proveedor", new Proveedor()); // Agregar un objeto Producto vacío al modelo
-		model.addAttribute("proveedores",proveedorService.getAllProveedor()); // Listar Productos
+	    model.addAttribute("proveedor", new Proveedor());
+		model.addAttribute("proveedores",proveedorService.getAllProveedor());
 	    return "admin/proveedor";
 	}
 	
@@ -284,12 +282,11 @@ public class AdminController {
 		return "redirect:/admin/proveedor";
 	}
 
-    // PROVEEDORES SERVICES	
+    // CLIENTE SERVICES	
 
 	@GetMapping("/cliente")	
 	public String cliente(Model model) {
-	    //model.addAttribute("proveedor", new Proveedor()); // Agregar un objeto Producto vacío al modelo
-		model.addAttribute("cliente", clienteService.getAllCliente()); // Listar Productos
+		model.addAttribute("cliente", clienteService.getAllCliente());
 	    return "admin/cliente";
 	}
 	
@@ -305,12 +302,99 @@ public class AdminController {
 		return "redirect:/admin/cliente";
 	}
 
-    // PROVEEDORES SERVICES	
+    // VENTAS SERVICES	
 
 	@GetMapping("/ventas")	
 	public String ventas(Model model) {
-	    //model.addAttribute("proveedor", new Proveedor()); // Agregar un objeto Producto vacío al modelo
         model.addAttribute("ventas", detalleService.getAllDetalle());
 	    return "admin/ventas";
+	}
+
+
+    @GetMapping("/venta")
+    public String listarVentas(Model model) {
+        List<Venta> ventas = ventaService.listar();
+        model.addAttribute("ventas", ventas);
+        return "admin/venta";
+    }
+
+    @GetMapping("/ventas/{id}")
+    public String verDetalleVenta(@PathVariable("id") Long id, Model model) {
+        List<Venta> ventas = ventaService.listar();
+        model.addAttribute("ventas", ventas);
+        Venta venta = ventaService.buscar(id);
+        model.addAttribute("venta", venta);
+        model.addAttribute("cliente", venta.getCliente());
+        model.addAttribute("detalles", venta.getDetalleVenta());
+        return "admin/venta";
+    }
+	//PEDIDOS SERVICES
+    
+    @GetMapping("/pedidos")
+    public String listarPedidos(Model model) {
+        List<Pedido> pedidos = pedidoService.obtenerTodosLosPedidos();
+        model.addAttribute("pedidos", pedidos);
+        return "admin/pedido";
+    }
+
+    @PostMapping("/pedidos/{idPedido}/estado")
+    public String actualizarEstadoPedido(@PathVariable Long idPedido, @RequestParam("estadoPedido") String estadoPedido, Model model) {
+        try {
+            pedidoService.actualizarEstadoPedido(idPedido, estadoPedido);
+            model.addAttribute("succMsg", "Estado del pedido actualizado con éxito.");
+        } catch (Exception e) {
+            model.addAttribute("errorMsg", "Error al actualizar el estado del pedido: " + e.getMessage());
+        }
+        return "redirect:/admin/pedidos";
+    }
+    
+    //USUARIO SERVICES	
+
+	@GetMapping("/usuario")	
+	public String usuario(Model model) {
+		model.addAttribute("usuarios", usuarioService.getAllUsuario()); // Listar Productos
+	    return "admin/usuario";
+	}
+	
+	@PostMapping("/saveUsuario")
+	public String saveUsuario(@ModelAttribute Usuario usuario, HttpSession session) throws IOException {
+		
+		Usuario saveUsuario = usuarioService.saveUsuario(usuario);
+		
+		if(ObjectUtils.isEmpty(saveUsuario)) {
+			session.setAttribute("errorMsg", "No se pudo guardar. Error interno del servidor");
+		}else {
+			session.setAttribute("successMsg", "Registro Satisfactorio");
+		}
+		return "redirect:/admin/usuario";
+	}
+	
+	@GetMapping("/deleteUsuario/{id}")
+	public String deleteUsuario(@PathVariable Long id, HttpSession session) {
+		Boolean deleteUsuario = usuarioService.deleteUsuario(id);
+		
+		if(deleteUsuario) {
+			session.setAttribute("successMsg", "Usuario eliminado exitosamente");
+		}else {
+			session.setAttribute("errorMsg", "Error en el servidor");
+		}
+		return "redirect:/admin/usuario";
+	}
+    
+	@PostMapping("/updateUsuario/{id}")
+	public String updateUsuario(@PathVariable("id") Long id, @ModelAttribute UsuarioUpdate usuarioUpdate) {
+	    Usuario updatedUsuario = usuarioService.actualizarUsuario(id, usuarioUpdate);
+	    if (updatedUsuario != null) {
+	        return "redirect:/admin/usuario";
+	    } else {
+	        return "redirect:/admin/usuario";
+	    }
+	}
+	
+	@GetMapping("/loadEditUsuario/{id}")
+	public String loadEditUsuario(@PathVariable Long id, Model model) {
+		model.addAttribute("usuario",usuarioService.getUsuarioById(id));
+		
+		return "admin/edit_usuario";
 	}
 }

@@ -22,14 +22,18 @@ public class Cliente {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long idcliente;
+	
 	@Column(name = "nombre", length = 255)
 	private String nombre;
+	
 	@Column(name = "email", length = 255)
 	private String email;
+	
 	@Column(name = "celular", length = 255)
 	private String celular;
-	@Column(name = "password", length = 255)
+	
+	@Column(name = "password", length = 45)
 	private String password;
-
+	
 	
 }

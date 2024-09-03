@@ -7,19 +7,26 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.idat.model.ProductUpdate;
 import com.idat.model.Producto;
 import com.idat.repository.ProductRepository;
 import com.idat.service.ProductService;
 
 @Service
 public class ProductServiceImpl implements ProductService{
+	
+	private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 	
 	@Autowired
 	private ProductRepository productRepository;
@@ -92,4 +99,40 @@ public class ProductServiceImpl implements ProductService{
 		return productRepository.findByCategoria(categoria);
 	}
 
+	@Override
+	public Producto actualizarProducto(Integer id, ProductUpdate productUpdate, MultipartFile file) {
+		Optional<Producto> productOpt = productRepository.findById(id);
+
+		String imageName = file.isEmpty() ? productUpdate.getImage() : file.getOriginalFilename();
+        if (productOpt.isPresent()) {
+        	Producto producto = productOpt.get();
+        	producto.setNombre(productUpdate.getNombre());
+        	producto.setDescripcion(productUpdate.getDescripcion());
+        	producto.setCategoria(productUpdate.getCategoria());
+        	producto.setPrecio(productUpdate.getPrecio());
+        	producto.setStock(productUpdate.getStock());
+        	producto.setImage(imageName);
+            return productRepository.save(producto);
+        }
+        return null;
+	}
+
+	@Override
+	public Page<Producto> getProductoPaginados(Pageable pageable) {
+	    // Verifica que el pageable tenga los parámetros correctos
+	    logger.info("Página solicitada: " + pageable.getPageNumber());
+	    logger.info("Tamaño de página: " + pageable.getPageSize());
+	    
+	    // Consulta al repositorio para obtener los productos paginados
+	    Page<Producto> paginados = productRepository.findAll(pageable);
+
+	    // Log para verificar el total de productos y páginas
+	    logger.info("Total de productos en todas las páginas: " + paginados.getTotalElements());
+	    logger.info("Total de páginas disponibles: " + paginados.getTotalPages());
+	    logger.info("Productos en esta página: " + paginados.getContent().size());
+
+	    // Retorna los productos paginados
+	    return paginados;
+	}
+	
 }

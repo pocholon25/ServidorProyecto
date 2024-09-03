@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LoginRepository extends JpaRepository<LoginRequest, Long> {
-	//List<LoginRequest> findByEmail(String email);
 	Optional<LoginRequest> findByEmail(String email);
 	
-	//Optional<LoginRequest> findByEmailAndPassword(String email, String password);
 }

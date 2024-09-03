@@ -18,9 +18,6 @@ public class LoginServiceImpl implements LoginService{
 	@Override
 	public LoginRequest buscarPorEmailYPassword(String email, String password) {
 		Optional<LoginRequest> usuario = usuarioRepository.findByEmail(email);
-	    System.out.println("Resultado de la búsqueda: " + usuario);
-	    System.out.println("Email proporcionado: " + email);
-	    System.out.println("Password proporcionado: " + password);
 	    
 	    if (usuario.isPresent()) {
 	        System.out.println("Usuario encontrado en la base de datos.");
@@ -38,7 +35,6 @@ public class LoginServiceImpl implements LoginService{
 
 	@Override
 	public LoginRequest guardarUsuario(LoginRequest login) {
-		// TODO Auto-generated method stub
 		return usuarioRepository.save(login);
 	}
 
